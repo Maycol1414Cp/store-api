@@ -12,7 +12,19 @@ def test_create_product_as_user(test_client, user_auth_headers):
     assert response.status_code == 403
 
 
-def test_get_product_as_user(test_client, user_auth_headers):
+def test_get_product_as_user(test_client, user_auth_headers, admin_auth_headers):
+    data = {
+        "name": "Smartphone",
+        "description": "Powerful smartphone with advanced features",
+        "price": 599.99,
+        "stock": 100,
+    }
+    response = test_client.post("/api/products", json=data, headers=admin_auth_headers)
+    assert response.status_code == 201
+    assert response.json["name"] == "Smartphone"
+    assert response.json["description"] == "Powerful smartphone with advanced features"
+    assert response.json["price"] == 599.99
+    assert response.json["stock"] == 100
     # El usuario con el rol de "user" debería poder obtener un producto específico
     # Este test asume que existe al menos un producto en la base de datos
     response = test_client.get("/api/products/1", headers=user_auth_headers)
