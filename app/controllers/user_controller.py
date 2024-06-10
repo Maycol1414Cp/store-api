@@ -1,9 +1,11 @@
-from flask import Blueprint, request, jsonify
-from app.models.user_model import User
+from flask import Blueprint, jsonify, request
 from flask_jwt_extended import create_access_token
 from werkzeug.security import check_password_hash
 
+from app.models.user_model import User
+
 user_bp = Blueprint("user", __name__)
+
 
 @user_bp.route("/register", methods=["POST"])
 def register():
@@ -17,7 +19,7 @@ def register():
 
     existing_user = User.find_by_username(username)
     if existing_user:
-        return jsonify({"error": "El nombre de usuario ya esta en uso"}), 400
+        return jsonify({"error": "El nombre de usuario ya está en uso"}), 400
 
     new_user = User(username, password, roles)
     new_user.save()
@@ -32,7 +34,7 @@ def login():
     password = data.get("password")
 
     user = User.find_by_username(username)
-    if user and check_password_hash(user.password, password):
+    if user and check_password_hash(user.password_hash, password):
         # Si las credenciales son válidas, genera un token JWT
         access_token = create_access_token(
             identity={"username": username, "roles": user.roles}

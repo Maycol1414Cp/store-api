@@ -1,5 +1,8 @@
 import pytest
 
+# Tests para el controlador de productos
+
+
 def test_get_products(test_client, admin_auth_headers):
     # El usuario con el rol de "admin" debería poder obtener la lista de productos
     response = test_client.get("/api/products", headers=admin_auth_headers)
